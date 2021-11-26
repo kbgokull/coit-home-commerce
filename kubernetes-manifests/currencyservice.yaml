@@ -27,11 +27,11 @@ spec:
     spec:
       serviceAccountName: default
       imagePullSecrets:
-      - name: deploy-pull-harbor
+      - name: gcr-registry-access
       terminationGracePeriodSeconds: 5
       containers:
       - name: server
-        image: currencyservice
+        image: gcr.io/neat-striker-332010/currencyservice:1.1.0
         ports:
         - name: grpc
           containerPort: 7000

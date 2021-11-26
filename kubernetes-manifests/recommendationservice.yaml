@@ -28,10 +28,10 @@ spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
       imagePullSecrets:
-      - name: deploy-pull-harbor
+      - name: gcr-registry-access
       containers:
       - name: server
-        image: recommendationservice
+        image: gcr.io/neat-striker-332010/recommendationservice:1.1.0
         ports:
         - containerPort: 8080
         readinessProbe:

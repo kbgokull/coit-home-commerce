@@ -31,10 +31,10 @@ spec:
       terminationGracePeriodSeconds: 5
       restartPolicy: Always
       imagePullSecrets:
-      - name: deploy-pull-harbor
+      - name: gcr-registry-access
       containers:
       - name: main
-        image: loadgenerator
+        image: gcr.io/neat-striker-332010/loadgenerator:1.1.0
         env:
         - name: FRONTEND_ADDR
           value: "frontend:80"

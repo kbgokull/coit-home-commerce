@@ -27,10 +27,10 @@ spec:
     spec:
       serviceAccountName: default
       imagePullSecrets:
-      - name: deploy-pull-harbor
+      - name: gcr-registry-access
       containers:
       - name: server
-        image: shippingservice
+        image: gcr.io/neat-striker-332010/shippingservice:1.1.0
         ports:
         - containerPort: 50051
         env:

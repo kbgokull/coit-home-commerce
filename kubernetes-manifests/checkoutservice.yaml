@@ -27,10 +27,10 @@ spec:
     spec:
       serviceAccountName: default
       imagePullSecrets:
-      - name: deploy-pull-harbor
+      - name: gcr-registry-access
       containers:
         - name: server
-          image: checkoutservice
+          image: gcr.io/neat-striker-332010/checkoutservice:1.1.0
           ports:
           - containerPort: 5050
           readinessProbe:

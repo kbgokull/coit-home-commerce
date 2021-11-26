@@ -28,12 +28,12 @@ spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
       imagePullSecrets:
-      - name: deploy-pull-harbor
+      - name: gcr-registry-access
       containers:
       - name: server
-        image: adservice
+        image: gcr.io/neat-striker-332010/adservice:1.1.0
         ports:
-        - containerPort: 9555
+        - containerPort: 9555 
         env:
         - name: PORT
           value: "9555"
