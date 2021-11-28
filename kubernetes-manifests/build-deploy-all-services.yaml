@@ -22,7 +22,7 @@ spec:
             { "image": "emailservice"                   ,   "tag": "1.2.0" },
             { "image": "frontend"                       ,   "tag": "1.2.0" },
             { "image": "loadgenerator"                  ,   "tag": "1.2.0" },
-            { "image": "paymentservice                  ,   "tag": "1.2.0" },
+            { "image": "paymentservice"                 ,   "tag": "1.2.0" },
             { "image": "productcatalogservice"          ,   "tag": "1.2.0" },
             { "image": "recommendationservice"          ,   "tag": "1.2.0" },
             { "image": "shippingservice"                ,   "tag": "1.2.0" }
