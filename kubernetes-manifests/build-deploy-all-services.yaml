@@ -12,42 +12,20 @@ spec:
         value: develop
       - name: gcr-repo
         value: gcr.io/neat-striker-332010
-      # - name: adservice-image
-      #   value: gcr.io/neat-striker-332010/adservice:1.0.1
-      # - name: cartservice-image
-      #   value: gcr.io/neat-striker-332010/cartservice:1.0.1
-      # - name: checkoutservice-image
-      #   value: gcr.io/neat-striker-332010/checkoutservice:1.0.1
-      # - name: currencyservice-image
-      #   value: gcr.io/neat-striker-332010/currencyservice:1.0.1
-      # - name: emailservice-image
-      #   value: gcr.io/neat-striker-332010/emailservice:1.0.1
-      # - name: frontend-image
-      #   value: gcr.io/neat-striker-332010/frontend:1.0.1
-      # - name: loadgenerator-image
-      #   value: gcr.io/neat-striker-332010/loadgenerator:1.0.1
-      # - name: paymentservice-image
-      #   value: gcr.io/neat-striker-332010/paymentservice:1.0.1
-      # - name: productcatalogservice-image
-      #   value: gcr.io/neat-striker-332010/productcatalogservice:1.0.1
-      # - name: recommendationservice-image
-      #   value: gcr.io/neat-striker-332010/recommendationservice:1.0.1
-      # - name: redis-cart-image
-      #   value: gcr.io/neat-striker-332010/redis-cart:1.0.1
-      # - name: shippingservice-image
-      #   value: gcr.io/neat-striker-332010/shippingservice:1.0.1
       - name: image-list
         value: |
           [
-            { "image": "adservice"                      ,   "tag": "1.1.0" },
-            { "image": "cartservice"                    ,   "tag": "1.1.0" },
-            { "image": "checkoutservice"                ,   "tag": "1.1.0" },
-            { "image": "emailservice"                   ,   "tag": "1.1.0" },
-            { "image": "frontend"                       ,   "tag": "1.1.0" },
-            { "image": "loadgenerator"                  ,   "tag": "1.1.0" },
-            { "image": "productcatalogservice"          ,   "tag": "1.1.0" },
-            { "image": "recommendationservice"          ,   "tag": "1.1.0" },
-            { "image": "shippingservice"                ,   "tag": "1.1.0" }
+            { "image": "adservice"                      ,   "tag": "1.2.0" },
+            { "image": "cartservice"                    ,   "tag": "1.2.0" },
+            { "image": "checkoutservice"                ,   "tag": "1.2.0" },
+            { "image": "currencyservice"                ,   "tag": "1.2.0" },
+            { "image": "emailservice"                   ,   "tag": "1.2.0" },
+            { "image": "frontend"                       ,   "tag": "1.2.0" },
+            { "image": "loadgenerator"                  ,   "tag": "1.2.0" },
+            { "image": "paymentservice                  ,   "tag": "1.2.0" },
+            { "image": "productcatalogservice"          ,   "tag": "1.2.0" },
+            { "image": "recommendationservice"          ,   "tag": "1.2.0" },
+            { "image": "shippingservice"                ,   "tag": "1.2.0" }
           ]
   volumes:
     - name: gcr-credentials
@@ -101,9 +79,6 @@ spec:
       container:
         image: gcr.io/kaniko-project/executor:latest
         args: 
-          # - "--context=/source/code/src/adservice"
-          # - "--dockerfile=/source/code/src/adservice/Dockerfile"
-          # - "--destination={{workflow.parameters.adservice-image}}"
           - "--context=/source/code/src/{{inputs.parameters.image}}"
           - "--dockerfile=/source/code/src/{{inputs.parameters.image}}/Dockerfile"
           - "--destination={{workflow.parameters.gcr-repo}}/{{inputs.parameters.image}}:{{inputs.parameters.tag}}"

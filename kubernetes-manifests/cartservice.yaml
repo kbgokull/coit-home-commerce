@@ -31,7 +31,7 @@ spec:
       - name: gcr-registry-access
       containers:
       - name: server
-        image: gcr.io/neat-striker-332010/cartservice
+        image: gcr.io/neat-striker-332010/cartservice:1.1.0
         ports:
         - containerPort: 7070
         env:

@@ -30,7 +30,7 @@ spec:
       - name: gcr-registry-access
       containers:
         - name: server
-          image: gcr.io/neat-striker-332010/checkoutservice
+          image: gcr.io/neat-striker-332010/checkoutservice:1.1.0
           ports:
           - containerPort: 5050
           readinessProbe:
