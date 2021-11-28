@@ -30,7 +30,7 @@ spec:
       - name: gcr-registry-access
       containers:
       - name: server
-        image: gcr.io/neat-striker-332010/shippingservice:1.1.0
+        image: gcr.io/neat-striker-332010/shippingservice
         ports:
         - containerPort: 50051
         env:
