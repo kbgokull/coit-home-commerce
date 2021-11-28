@@ -1,0 +1,141 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: build-deploy-all-services-
+spec:
+  entrypoint: build-deploy-services
+  arguments:
+    parameters:
+      - name: git-repo
+        value: https://github.com/kbgokull/coit-home-commerce.git
+      - name: git-revision
+        value: develop
+      - name: gcr-repo
+        value: gcr.io/neat-striker-332010
+      # - name: adservice-image
+      #   value: gcr.io/neat-striker-332010/adservice:1.0.1
+      # - name: cartservice-image
+      #   value: gcr.io/neat-striker-332010/cartservice:1.0.1
+      # - name: checkoutservice-image
+      #   value: gcr.io/neat-striker-332010/checkoutservice:1.0.1
+      # - name: currencyservice-image
+      #   value: gcr.io/neat-striker-332010/currencyservice:1.0.1
+      # - name: emailservice-image
+      #   value: gcr.io/neat-striker-332010/emailservice:1.0.1
+      # - name: frontend-image
+      #   value: gcr.io/neat-striker-332010/frontend:1.0.1
+      # - name: loadgenerator-image
+      #   value: gcr.io/neat-striker-332010/loadgenerator:1.0.1
+      # - name: paymentservice-image
+      #   value: gcr.io/neat-striker-332010/paymentservice:1.0.1
+      # - name: productcatalogservice-image
+      #   value: gcr.io/neat-striker-332010/productcatalogservice:1.0.1
+      # - name: recommendationservice-image
+      #   value: gcr.io/neat-striker-332010/recommendationservice:1.0.1
+      # - name: redis-cart-image
+      #   value: gcr.io/neat-striker-332010/redis-cart:1.0.1
+      # - name: shippingservice-image
+      #   value: gcr.io/neat-striker-332010/shippingservice:1.0.1
+      - name: image-list
+        value: |
+          [
+            { "image": "adservice"                      ,   "tag": "1.1.0" },
+            { "image": "cartservice"                    ,   "tag": "1.1.0" },
+            { "image": "checkoutservice"                ,   "tag": "1.1.0" },
+            { "image": "emailservice"                   ,   "tag": "1.1.0" },
+            { "image": "frontend"                       ,   "tag": "1.1.0" },
+            { "image": "loadgenerator"                  ,   "tag": "1.1.0" },
+            { "image": "productcatalogservice"          ,   "tag": "1.1.0" },
+            { "image": "recommendationservice"          ,   "tag": "1.1.0" },
+            { "image": "shippingservice"                ,   "tag": "1.1.0" }
+          ]
+  volumes:
+    - name: gcr-credentials
+      secret:
+        secretName: gcr-registry-access
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+
+  templates:
+    - name: build-deploy-services
+      steps:
+        - - name: build-service
+            template: kaniko-image-builder
+            arguments:
+              parameters:
+              - name: image
+                value: "{{item.image}}"
+              - name: tag
+                value: "{{item.tag}}"
+            withParam: "{{workflow.parameters.image-list}}" 
+        - - name: deploy-service
+            template: kubectl-deploy
+            arguments:
+              parameters:
+              - name: image
+                value: "{{item.image}}"
+              - name: tag
+                value: "{{item.tag}}"
+            withParam: "{{workflow.parameters.image-list}}"
+        - - name: set-new-image
+            template: kubectl-set-image
+            arguments:
+              parameters:
+              - name: image
+                value: "{{item.image}}"
+              - name: tag
+                value: "{{item.tag}}"
+            withParam: "{{workflow.parameters.image-list}}"   
+    - name: kaniko-image-builder
+      inputs:
+        parameters:
+          - name: image
+          - name: tag
+        artifacts:
+          - name: source-code
+            path: /source/code
+            git:
+              repo: "{{workflow.parameters.git-repo}}"
+              revision: "{{workflow.parameters.git-revision}}"
+      container:
+        image: gcr.io/kaniko-project/executor:latest
+        args: 
+          # - "--context=/source/code/src/adservice"
+          # - "--dockerfile=/source/code/src/adservice/Dockerfile"
+          # - "--destination={{workflow.parameters.adservice-image}}"
+          - "--context=/source/code/src/{{inputs.parameters.image}}"
+          - "--dockerfile=/source/code/src/{{inputs.parameters.image}}/Dockerfile"
+          - "--destination={{workflow.parameters.gcr-repo}}/{{inputs.parameters.image}}:{{inputs.parameters.tag}}"
+        volumeMounts:
+          - name: gcr-credentials
+            mountPath: "/kaniko/.docker/"
+    - name: kubectl-deploy
+      inputs:
+        parameters:
+          - name: image
+          - name: tag
+        artifacts:
+          - name: manifests-source
+            path: /manifests
+            git:
+              repo: "{{workflow.parameters.git-repo}}"
+              revision: "{{workflow.parameters.git-revision}}"
+      container:
+        image: bitnami/kubectl:1.20.13
+        args: 
+          - "apply"
+          - "-f"
+          - "/manifests/kubernetes-manifests/{{inputs.parameters.image}}.yaml"        
+    - name: kubectl-set-image
+      inputs:
+        parameters:
+          - name: image
+          - name: tag
+      container:
+        image: bitnami/kubectl:1.20.13
+        args:
+          - "set"
+          - "image"
+          - "deployment/{{inputs.parameters.image}}"
+          - "server={{workflow.parameters.gcr-repo}}/{{inputs.parameters.image}}:{{inputs.parameters.tag}}"
